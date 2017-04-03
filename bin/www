@@ -7,12 +7,13 @@
 var servitium = require('../servitium.server');
 var debug = require('debug')('servitium.auth:server');
 var http = require('http');
+var config = require('../config/config');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '80');
+var port = normalizePort(process.env.PORT || config.serverPort);
 servitium.set('port', port);
 
 /**
