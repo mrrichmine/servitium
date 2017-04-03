@@ -4,7 +4,15 @@ Enterprise portal project.
 
 ## Deployment
 
-Don't forget to `npm i` to install all required npm packages.
+After shipping `npm i` to install all required npm packages.
+
+Create `config.json` in `./config/` folder :
+
+```$xslt
+{
+ "serverPort": 80
+}
+```
 
 ## Building Servitium App
 
