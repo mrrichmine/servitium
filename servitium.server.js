@@ -1,13 +1,24 @@
 var express = require('express');
+var servitium = express();
+
+var config = require('./config/config');
+
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
+// Mongoose => MongoDB connection
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://' + config.mongodbHost + ':' + config.mongodbPort + '/' + config.mongodbDatabase);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Connection error:'));
+db.once('open', function() {
+  console.log('Connected to ' + config.mongodbDatabase + ' on ' + config.mongodbHost + ':' + config.mongodbPort)
+});
 
-var servitium = express();
+var index = require('./routes/index');
 
 // uncomment after placing your favicon in /public
 servitium.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
