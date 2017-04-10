@@ -5,15 +5,36 @@
 <form (ngSubmit)="onSubmitingMessage()" [formGroup]="colloquimForm">
 
   <div class="col-xs-3">
-    <input
-      type="text"
-      id="creator"
-      class="form-control"
-      formControlName="creator"
-      [disabled]="isSubmitedName">
+
+    <div class="row">
+      Ваше имя
+      <input
+        type="text"
+        id="creator"
+        class="form-control"
+        formControlName="creator"
+        value=""
+        [disabled]="isSubmitedName">
+      <button
+        class="btn btn-block btn-primary"
+        (click)="onSubmitingName()">
+        Подтвердить имя
+      </button>
+    </div>
+
+    <div class="row" [hidden]="!isSubmitedName">
+      Укажите идентификатор комнаты
+      <input
+        type="text"
+        id="room"
+        class="form-control"
+        formControlName="room">
+    </div>
+
   </div>
 
   <div class="col-xs-8" [hidden]="!isSubmitedName">
+    Сообщения
     <input
       type="text"
       id="text"
@@ -21,38 +42,19 @@
       formControlName="text">
   </div>
 
+  <div class="col-xs-9" [hidden]="isSubmitedName">
+    Добро пожаловать, представтесь пожалуйста!
+  </div>
+
   <div class="col-xs-1" [hidden]="!isSubmitedName">
     <button
       type="submit"
-      class="btn btn-block btn-primary"
-      [disabled]="!isSubmitedName">
+      class="btn btn-block btn-primary">
       <span class="glyphicon glyphicon-send"></span>
     </button>
   </div>
 
 </form>
-
-<div class="col-xs-1" [hidden]="isSubmitedName">
-
-  <button
-    type="submit"
-    class="btn btn-block btn-primary"
-    (click)="onSubmitingName()"
-    [disabled]="isSubmitedName">
-    <span class="glyphicon glyphicon-ok"></span>
-  </button>
-
-</div>
-
-<div class="col-xs-5" [hidden]="isSubmitedName">
-
-  Добро пожаловать, представтесь пожалуйста!
-
-</div>
-
-<div class="col-xs-3" [hidden]="!isSubmitedName">
-  Последние сообщения:
-</div>
 
 <div class="col-xs-9" [hidden]="!isSubmitedName">
   <app-colloquim__message *ngFor="let message of messages" [message]="message">

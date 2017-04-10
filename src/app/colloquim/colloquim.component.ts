@@ -14,7 +14,11 @@ export class ColloquimComponent implements OnInit {
   creator         = '';
   text            = '';
   date            = '';
-  isSubmitedName  = false;
+  room            = '';
+
+  timer: any;
+
+  isSubmitedName    = false;
 
   colloquimForm:  FormGroup;
 
@@ -26,7 +30,8 @@ export class ColloquimComponent implements OnInit {
 
     this.colloquimForm  = new FormGroup({
       text:               new FormControl( null, [ ] ),
-      creator:            new FormControl( null, [ ] ),
+      creator:            new FormControl( {disabled: true}, [ ] ),
+      room:               new FormControl( null, [ ] )
     });
 
   }
@@ -39,7 +44,8 @@ export class ColloquimComponent implements OnInit {
     const colloquimMessage = new ColloquimMessage(
       this.text,
       this.colloquimForm.value.creator,
-      this.date
+      this.date,
+      this.colloquimForm.value.room
     );
 
     this.colloquimService.postMessage( colloquimMessage )
@@ -47,13 +53,11 @@ export class ColloquimComponent implements OnInit {
         data => {
 
           this.formReset();
-          this.getMessages()
+          this.startGetTimer()
 
         },
         error => {}
       );
-
-
 
     this.text = '';
 
@@ -64,7 +68,8 @@ export class ColloquimComponent implements OnInit {
     const colloquimMessage = new ColloquimMessage(
       this.colloquimForm.value.text,
       this.colloquimForm.value.creator,
-      this.date
+      this.date,
+      this.colloquimForm.value.room
     );
 
     this.colloquimService.postMessage( colloquimMessage )
@@ -75,23 +80,42 @@ export class ColloquimComponent implements OnInit {
         },
         error => {}
       );
+
   }
 
   formReset(){
 
-    this.colloquimForm.value.text = '9'
+    this.colloquimForm.value.text = ''
 
   }
 
-  getMessages(){
-    setInterval(() =>
+  getMessages() {
 
-    this.colloquimService.getMessages()
+    const colloquimMessage = new ColloquimMessage(
+      this.colloquimForm.value.text,
+      this.colloquimForm.value.creator,
+      this.date,
+      this.colloquimForm.value.room
+    );
+
+    this.colloquimService.getMessage( colloquimMessage )
       .subscribe(
         (messages: ColloquimMessage[]) => {
           this.messages = messages;
           return this.messages
         }
-      ), 2000 )
+      )
   }
+
+  startGetTimer() {
+    this.timer = setInterval(this.getMessages.bind(this), 3000);
+  }
+
+  stopGetTimer() {
+    clearInterval(this.timer);
+  }
+
+
 }
+
+

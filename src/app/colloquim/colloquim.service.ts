@@ -23,11 +23,12 @@ export class ColloquimService {
       .catch((error: Response) => Observable.throw(error.json()));
   }
 
-  getMessages() {
+  getMessage
+    ( colloquimMessage: ColloquimMessage ) {
 
     const headers = new Headers({'Content-Type': 'application/json'});
-
-    return this.http.get('http://10.10.3.158/colloquim/get', {headers: headers})
+    console.log('room in service:' + colloquimMessage.room);
+    return this.http.get('http://10.10.3.158/colloquim/get/' + colloquimMessage.room, {headers: headers})
       .map((response: Response) => {
         const colloquimmessages = response.json().obj;
         let transformedMessages: ColloquimMessage[] = [];
@@ -35,7 +36,8 @@ export class ColloquimService {
           transformedMessages.push(new ColloquimMessage(
             colloquimmessage.text,
             colloquimmessage.creator,
-            colloquimmessage.date)
+            colloquimmessage.date,
+            colloquimmessage.room)
           );
         }
         this.messages = transformedMessages;
