@@ -5,6 +5,8 @@ import { Observable }               from "rxjs";
 
 import { ColloquimMessage }         from "./colloquim.model";
 
+import config                       from '../../../config/config.json';
+
 @Injectable()
 export class ColloquimService {
 
@@ -18,7 +20,7 @@ export class ColloquimService {
     const body = JSON.stringify( colloquimMessage );
     const headers = new Headers({'Content-Type': 'application/json'});
 
-    return this.http.post('http://10.10.3.158/colloquim/post', body, {headers: headers})
+    return this.http.post('http://' + config.serverHost + '/colloquim/post', body, {headers: headers})
       .map((response: Response) => response.json())
       .catch((error: Response) => Observable.throw(error.json()));
   }
@@ -27,8 +29,7 @@ export class ColloquimService {
     ( colloquimMessage: ColloquimMessage ) {
 
     const headers = new Headers({'Content-Type': 'application/json'});
-    console.log('room in service:' + colloquimMessage.room);
-    return this.http.get('http://10.10.3.158/colloquim/get/' + colloquimMessage.room, {headers: headers})
+    return this.http.get('http://' + config.serverHost + '/colloquim/get/' + colloquimMessage.room, {headers: headers})
       .map((response: Response) => {
         const colloquimmessages = response.json().obj;
         let transformedMessages: ColloquimMessage[] = [];

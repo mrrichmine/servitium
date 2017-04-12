@@ -8,4 +8,6 @@ body {
   font-family: Glametrix;
 }
 
-
+.glyphicon {
+  font-size: 10px;
+}

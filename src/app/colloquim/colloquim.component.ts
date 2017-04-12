@@ -15,6 +15,7 @@ export class ColloquimComponent implements OnInit {
   text            = '';
   date            = '';
   room            = '';
+  submittedRoom   = '';
 
   timer: any;
 
@@ -30,7 +31,7 @@ export class ColloquimComponent implements OnInit {
 
     this.colloquimForm  = new FormGroup({
       text:               new FormControl( null, [ ] ),
-      creator:            new FormControl( {disabled: true}, [ ] ),
+      creator:            new FormControl( null, [ ] ),
       room:               new FormControl( null, [ ] )
     });
 
@@ -39,63 +40,44 @@ export class ColloquimComponent implements OnInit {
   onSubmitingName(){
 
     this.isSubmitedName = true;
-    this.text = 'присоединился к обсуждению';
+    this.colloquimForm.controls['creator'].reset({value: this.colloquimForm.get('creator').value, disabled: true});
 
-    const colloquimMessage = new ColloquimMessage(
-      this.text,
-      this.colloquimForm.value.creator,
-      this.date,
-      this.colloquimForm.value.room
-    );
-
-    this.colloquimService.postMessage( colloquimMessage )
-      .subscribe(
-        data => {
-
-          this.formReset();
-          this.startGetTimer()
-
-        },
-        error => {}
-      );
-
-    this.text = '';
+    this.startGetTimer()
 
   }
 
   onSubmitingMessage(){
 
     const colloquimMessage = new ColloquimMessage(
-      this.colloquimForm.value.text,
-      this.colloquimForm.value.creator,
+      this.colloquimForm.get('text').value,
+      this.colloquimForm.get('creator').value,
       this.date,
-      this.colloquimForm.value.room
+      this.colloquimForm.get('room').value
     );
 
     this.colloquimService.postMessage( colloquimMessage )
       .subscribe(
         data => {
-
-          this.formReset();
+          this.clearMessage()
         },
         error => {}
       );
 
   }
 
-  formReset(){
+  clearMessage(){
 
-    this.colloquimForm.value.text = ''
+    this.colloquimForm.get('text').reset();
 
   }
 
   getMessages() {
 
     const colloquimMessage = new ColloquimMessage(
-      this.colloquimForm.value.text,
-      this.colloquimForm.value.creator,
+      this.colloquimForm.get('text').value,
+      this.colloquimForm.get('creator').value,
       this.date,
-      this.colloquimForm.value.room
+      this.colloquimForm.get('room').value
     );
 
     this.colloquimService.getMessage( colloquimMessage )

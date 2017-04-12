@@ -5,6 +5,7 @@ var ColloquimMessage = require('../models/colloquim.message');
 
 // Добавление сообщения
 router.post('/post', function (req, res) {
+
   var colloquimmessage = new ColloquimMessage({
     creator:  req.body.creator,
     text:     req.body.text,
@@ -25,8 +26,7 @@ router.post('/post', function (req, res) {
 });
 
 router.get('/get/:room', function (req, res) {
-  console.log(req.params.room);
-  ColloquimMessage.find({ room: req.params.room }).limit( 12 ).sort( '-_id' ).exec( function (err, colloquimmessages) {
+  ColloquimMessage.find({ room: req.params.room }).limit( 30 ).sort( '-_id' ).exec( function (err, colloquimmessages) {
     if (err) {
       return res.status(500).json({
         title: 'При получении списка <- Сообщений -> возникла ошибка',
