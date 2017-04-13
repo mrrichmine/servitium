@@ -10,6 +10,7 @@ Create `config.json` in `./config/` folder :
 
 ```$xslt
 {
+  "serverHost": "",
   "serverPort": "",
   "mongodbHost": "",
   "mongodbPort": "",

@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 
 // Mongoose => MongoDB connection
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://' + config.mongodbHost + ':' + config.mongodbPort + '/' + config.mongodbDatabase);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
@@ -18,16 +19,29 @@ db.once('open', function() {
   console.log('Connected to ' + config.mongodbDatabase + ' on ' + config.mongodbHost + ':' + config.mongodbPort)
 });
 
+var colloquim = require('./routes/colloquim');
 var index = require('./routes/index');
 
-// uncomment after placing your favicon in /public
+// Задаем папку, доступную из фронтенда
+servitium.use(express.static(path.join(__dirname, 'public')));
+// Иконка приложения
 servitium.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 servitium.use(logger('dev'));
 servitium.use(bodyParser.json());
 servitium.use(bodyParser.urlencoded({ extended: false }));
 servitium.use(cookieParser());
-servitium.use(express.static(path.join(__dirname, 'public')));
 
+
+// Задаем заголовки для данных из ответов(response)
+servitium.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
+  next();
+});
+
+servitium.use('/colloquim', colloquim)
 servitium.use('/', index);
 
 // catch 404 and forward to error handler
