@@ -6,8 +6,14 @@
 
 body {
   font-family: Glametrix;
+  font-size: 18px;
 }
 
 .glyphicon {
   font-size: 10px;
+}
+
+.loading {
+  font-size: 36px;
+  padding-top: 10%;
 }
