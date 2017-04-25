@@ -15,5 +15,6 @@ body {
 
 .loading {
   font-size: 36px;
+  text-align: center;
   padding-top: 10%;
 }

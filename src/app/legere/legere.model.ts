@@ -1,19 +1,22 @@
 export class LegereValue {
-  constructor( public value:    any,
-               public date:     any
+  constructor( public indicatorId:  any,
+               public value:        any,
+               public date:         any,
+               public id?:          any
   ){}
 }
 
 export class LegereIndicator {
-  constructor( public valueID:      any,
-               public name:         string,
-               public lastUpdated:  any
+  constructor( public groupId:      any,
+               public name:         any,
+               public lastUpdated:  any,
+               public id?:          any
   ){}
 }
 
 export class LegereIndicatorGroup {
-  constructor( public indicatorID:    any,
-               public name:           string
+  constructor( public name:         any,
+               public id?:          any
   ){}
 }
 

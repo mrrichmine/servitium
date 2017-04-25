@@ -1,3 +1,172 @@
-<h3>
-  Servitium.Legere | Система сбора информации
-</h3>
+<div class="row">
+
+  <div class="col-xs-11">
+    <h3>
+      Servitium.Legere | Система сбора информации
+    </h3>
+  </div>
+
+  <div class="col-xs-1" [hidden]="!isSubmitedProvincia">
+    <button
+      class="btn btn-warning"
+      (click)="onChangingMode()">
+      <span class="glyphicon glyphicon-wrench"></span>
+    </button>
+  </div>
+
+</div>
+
+
+<div class="col-xs-12">
+
+  <span class="glyphicon glyphicon-th-list"></span>
+  Выберите подразделение
+  <br>
+
+  <div class="input-group">
+    <select
+      name="branch"
+      id="legereBranchSelected"
+      class="btn-block form-control servitium-form">
+      <option value="00">Дирекция МФЦ</option>
+      <option value="01">Отдел документооборота и организационной работы</option>
+    </select>
+
+    <span class="input-group-btn">
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        (click)="onSubmitingProvincia()">
+            <span class="glyphicon glyphicon-ok"></span>
+      </button>
+    </span>
+
+  </div>
+
+</div>
+
+<div class="col-xs-12">
+
+  <div [hidden]="!isSubmitedProvincia">
+
+    <span class="glyphicon glyphicon-book"></span>
+    Выберите группу показателей
+    <br>
+
+    <div class="input-group">
+
+      <select
+        name="legereindicatorgroup"
+        id="legereIndicatorGroupSelected"
+        class="btn-block form-control">
+        <option
+          *ngFor="let legereindicatorgroup of legereindicatorgroups"
+          [ngValue]="legereindicatorgroup.id"
+          (click)="onSelect(legereindicatorgroup)">{{ legereindicatorgroup.name }}</option>
+      </select>
+
+      <span class="input-group-btn">
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          (click)="onSubmitingIndicatorGroup()">
+              <span class="glyphicon glyphicon-ok"></span>
+        </button>
+      </span>
+
+    </div>
+
+  </div>
+
+  <div [hidden]="!isAllowedEdit">
+
+    <form (ngSubmit)="postIndicatorGroup()" [formGroup]="addIndicatorGroupForm">
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="legereIndicatorGroupName"
+          class="btn-block form-control"
+          placeholder="Введите название новой группы показателей"
+          formControlName="name"
+          autocomplete="off">
+
+        <span class="input-group-btn">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block">
+                <span class="glyphicon glyphicon-ok"></span>
+          </button>
+        </span>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="col-xs-12">
+
+  <div [hidden]="!isSubmitedIndicatorGroup">
+
+    <span class="glyphicon glyphicon-duplicate"></span>
+    Выберите показатель
+    <br>
+
+    <div class="input-group">
+
+      <select
+        name="branch"
+        id="legereIndicatorSelected"
+        class="btn-block form-control">
+        <option *ngFor="let legereindicator of legereindicators" [ngValue]="legereindicator.name">{{ legereindicator.name }} {{ legereindicator.id }}</option>
+      </select>
+
+      <span class="input-group-btn">
+        <button
+          type="submit"
+          class="btn btn-primary btn-block">
+              <span class="glyphicon glyphicon-ok"></span>
+        </button>
+      </span>
+
+    </div>
+
+  </div>
+
+  <div [hidden]="!isAllowedEdit">
+
+    <form (ngSubmit)="postIndicator()" [formGroup]="addIndicatorForm">
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="legereIndicatorName"
+          class="btn-block form-control"
+          placeholder="Введите название нового показателя"
+          formControlName="name"
+          autocomplete="off">
+
+        <span class="input-group-btn">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block">
+                <span class="glyphicon glyphicon-ok"></span>
+          </button>
+        </span>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
+
