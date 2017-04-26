@@ -10,6 +10,7 @@ router.post('/value', function (req, res) {
 
   var legerevalue = new LegereValue({
     indicatorId:  req.body.indicatorId,
+    provinciaId:  req.body.provinciaId,
     value:        req.body.value
   });
   legerevalue.save(function(err, result) {
@@ -22,6 +23,29 @@ router.post('/value', function (req, res) {
     res.status(201).json({
       message: 'Значение показателя успешно опубликовано',
       obj: result
+    });
+  });
+});
+
+// Получение значений показателей по ID показателя
+router.get('/fromindicator/:id', function (req, res) {
+
+  LegereValue.find( { indicatorId: req.params.id }, function (err, legerevalue) {
+    if (err) {
+      return res.status(500).json({
+        title: 'При получении списка <- Значений показателей -> возникла ошибка',
+        error: err
+      });
+    }
+    if (!legerevalue) {
+      return res.status(404).json({
+        title: 'Данные <- Значения показателей -> не найдены',
+        error: err
+      });
+    }
+    res.status(200).json({
+      message: '<- Значения показателей -> получены',
+      obj: legerevalue
     });
   });
 });

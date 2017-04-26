@@ -1,5 +1,6 @@
 export class LegereValue {
   constructor( public indicatorId:  any,
+               public provinciaId:  any,
                public value:        any,
                public date:         any,
                public id?:          any

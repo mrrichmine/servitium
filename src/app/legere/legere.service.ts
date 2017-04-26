@@ -12,6 +12,7 @@ export class LegereService {
 
   private legereindicatorgroups: LegereIndicatorGroup[] = [];
   private legereindicators: LegereIndicator[] = [];
+  private legerevalues: LegereValue[] = [];
 
   constructor( private http: Http ) { }
 
@@ -24,6 +25,32 @@ export class LegereService {
 
     return this.http.post('http://' + config.serverHost + '/legere/value', body, {headers: headers})
       .map((response: Response) => response.json())
+      .catch((error: Response) => Observable.throw(error.json()));
+  }
+
+  // Получить значения показателей по ID показателя
+  getValuesById
+  ( legereIndicator: LegereIndicator ) {
+
+    const headers = new Headers({'Content-Type': 'application/json'});
+
+    return this.http.get('http://' + config.serverHost + '/legere/fromindicator/' + legereIndicator.id, {headers: headers})
+      .map((response: Response) => {
+        const legerevalues = response.json().obj;
+        let transformedLegereValues: LegereValue[] = [];
+        for (let legerevalue of legerevalues) {
+          transformedLegereValues.push(new LegereValue(
+            legerevalue.groupId,
+            legerevalue.provinciaId,
+            legerevalue.value,
+            legerevalue.date,
+            legerevalue._id
+            )
+          );
+        }
+        this.legerevalues = transformedLegereValues;
+        return transformedLegereValues;
+      })
       .catch((error: Response) => Observable.throw(error.json()));
   }
 
@@ -54,7 +81,8 @@ export class LegereService {
           transformedLegereIndicators.push(new LegereIndicator(
             legereindicator.groupId,
             legereindicator.name,
-            legereindicator.lastUpdated
+            legereindicator.lastUpdated,
+            legereindicator._id
             )
           );
         }
