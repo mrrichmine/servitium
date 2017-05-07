@@ -1,8 +1,9 @@
 import { Component, OnInit }        from '@angular/core';
 import { FormGroup, FormControl }   from '@angular/forms';
 
-import { LegereValue, LegereIndicator, LegereIndicatorGroup } from "./legere.model";
-import { LegereService }                                      from "./legere.service";
+import { LegereValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia } from "./legere.model";
+
+import { LegereService }            from "./legere.service";
 
 @Component({
   selector: 'app-legere',
@@ -15,27 +16,37 @@ export class LegereComponent implements OnInit {
   groupId = '';
   date = '';
 
+  legereprovincias: LegereProvincia[];
   legereindicatorgroups: LegereIndicatorGroup[];
   legereindicators: LegereIndicator[];
   legerevalues: LegereValue[];
+  legereprintvalues: LegereValue[];
 
+  selectedProvincia: LegereProvincia;
   selectedIndicatorGroup: LegereIndicatorGroup;
   selectedIndicator: LegereIndicator;
-  selectedProvincia = '';
 
   isSubmitedProvincia       = false;
   isSubmitedIndicatorGroup  = false;
+  isPrint                   = false;
 
+  isEditProvincia           = false;
   isEditIndicatorGroup      = false;
   isEditIndicator           = false;
+  isEditValue               = false;
 
   constructor( private legereService: LegereService ) { }
 
+  addProvinciaForm: FormGroup;
   addIndicatorGroupForm: FormGroup;
   addIndicatorForm: FormGroup;
   addValueForm: FormGroup;
 
   ngOnInit() {
+
+    this.addProvinciaForm = new FormGroup({
+      name:   new FormControl( null, [ ] )
+    });
 
     this.addIndicatorGroupForm = new FormGroup({
       name:   new FormControl( null, [ ] )
@@ -49,23 +60,37 @@ export class LegereComponent implements OnInit {
       value:   new FormControl( null, [ ] )
     });
 
+    this.getProvincias()
+
+  }
+
+  onSelectProvincia( provincia: LegereProvincia ): void {
+
+    this.selectedProvincia = provincia;
+    this.isSubmitedProvincia = false;
+    this.isSubmitedIndicatorGroup = false;
+
+  }
+
+  onSelectIndicatorGroup( indicatorGroup: LegereIndicatorGroup ): void {
+
+    this.selectedIndicatorGroup = indicatorGroup;
+    this.isSubmitedIndicatorGroup = false;
+
+  }
+
+  onSelectIndicator( indicator: LegereIndicator ): void {
+
+    this.selectedIndicator = indicator;
+    this.getValuesByProvincia()
+
   }
 
   onSubmitingProvincia(){
 
     this.isSubmitedProvincia = true;
-    this.selectedProvincia = 'TEST';
     this.getIndicatorGroups();
 
-  }
-
-  onSelectIndicatorGroup( indicatorGroup: LegereIndicatorGroup ): void {
-    this.selectedIndicatorGroup = indicatorGroup;
-  }
-
-  onSelectIndicator( indicator: LegereIndicator ): void {
-    this.selectedIndicator = indicator;
-    this.getValues()
   }
 
   onSubmitingIndicatorGroup(){
@@ -75,10 +100,42 @@ export class LegereComponent implements OnInit {
 
   }
 
+  postProvincia(){
+
+    const legereProvincia = new LegereProvincia(
+      this.addProvinciaForm.get('name').value
+    );
+
+    this.legereService.postProvincia( legereProvincia )
+      .subscribe(
+        data => {
+          this.addProvinciaForm.reset();
+          this.getProvincias()
+        },
+        error => {}
+      );
+  }
+
+  getProvincias(){
+    this.legereService.getProvincias()
+      .subscribe(
+        ( legereprovincias: LegereProvincia[]) => {
+          this.legereprovincias = legereprovincias;
+          return this.legereprovincias
+        }
+      );
+  }
+
+  onEditProvincia(){
+
+    this.isEditProvincia = !this.isEditProvincia;
+    return this.isEditProvincia
+
+  }
+
   onEditIndicatorGroup(){
 
     this.isEditIndicatorGroup = !this.isEditIndicatorGroup;
-    console.log('isEditIndicatorGroup: ', this.isEditIndicatorGroup);
     return this.isEditIndicatorGroup
 
   }
@@ -86,8 +143,23 @@ export class LegereComponent implements OnInit {
   onEditIndicator(){
 
     this.isEditIndicator = !this.isEditIndicator;
-    console.log('isEditIndicator: ', this.isEditIndicator);
     return this.isEditIndicator
+
+  }
+
+  onEditValue(){
+
+    this.isEditValue = !this.isEditValue;
+    return this.isEditValue
+
+  }
+
+  onPrintIndicatorValues(){
+
+    this.isPrint = !this.isPrint;
+    console.log(this.isPrint);
+    this.getValuesById( this.legereprovincias );
+    return this.isPrint
 
   }
 
@@ -105,8 +177,6 @@ export class LegereComponent implements OnInit {
         },
         error => {}
       );
-
-
   }
 
   getIndicatorGroups(){
@@ -123,7 +193,7 @@ export class LegereComponent implements OnInit {
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
-      this.selectedProvincia,
+      this.selectedProvincia.id,
       this.addValueForm.get('value').value,
       this.date
     );
@@ -132,29 +202,49 @@ export class LegereComponent implements OnInit {
       .subscribe(
         data => {
           this.addValueForm.reset();
-          this.getValues()
+          this.getValuesByProvincia()
         },
         error => {}
       );
-
   }
 
-  getValues(){
+  getValuesByProvincia(){
 
-    console.log('getValues');
+    console.log('getValuesByProvincia');
 
-    const legereIndicator = new LegereIndicator(
+    const legereValue = new LegereValue(
+      this.selectedIndicator.id,
+      this.selectedProvincia.id,
       '',
-      '',
-      '',
-      this.selectedIndicator.id
+      ''
     );
 
-    this.legereService.getValuesById( legereIndicator )
+    this.legereService.getValuesByProvincia( legereValue )
       .subscribe(
         ( legerevalues: LegereValue[]) => {
           this.legerevalues = legerevalues;
           return this.legerevalues
+        }
+      );
+  }
+
+  getValuesById( legereprovincias ){
+
+    console.log('getValuesById');
+
+    const legereValue = new LegereValue(
+      this.selectedIndicator.id,
+      '',
+      '',
+      ''
+    );
+
+    this.legereService.getValuesById( legereValue )
+      .subscribe(
+        ( legereprintvalues: LegereValue[]) => {
+
+          this.legereprintvalues = legereprintvalues;
+          return this.legereprintvalues
         }
       );
   }

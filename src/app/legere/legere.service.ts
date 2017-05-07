@@ -3,13 +3,14 @@ import { Http, Headers, Response }  from "@angular/http";
 import 'rxjs/Rx';
 import { Observable }               from "rxjs";
 
-import { LegereValue, LegereIndicator, LegereIndicatorGroup } from "./legere.model";
+import { LegereValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia } from "./legere.model";
 
 import config                       from '../../../config/config.json';
 
 @Injectable()
 export class LegereService {
 
+  private legereprovincias: LegereProvincia[] = [];
   private legereindicatorgroups: LegereIndicatorGroup[] = [];
   private legereindicators: LegereIndicator[] = [];
   private legerevalues: LegereValue[] = [];
@@ -28,13 +29,39 @@ export class LegereService {
       .catch((error: Response) => Observable.throw(error.json()));
   }
 
-  // Получить значения показателей по ID показателя
-  getValuesById
-  ( legereIndicator: LegereIndicator ) {
+  // Получить значения показателей по ID показателя и ID филиала
+  getValuesByProvincia
+  ( legereValue: LegereValue ) {
 
     const headers = new Headers({'Content-Type': 'application/json'});
 
-    return this.http.get('http://' + config.serverHost + '/legere/fromindicator/' + legereIndicator.id, {headers: headers})
+    return this.http.get('http://' + config.serverHost + '/legere/fromprovincia/' + legereValue.provinciaId + '&' + legereValue.indicatorId, {headers: headers})
+      .map((response: Response) => {
+        const legerevalues = response.json().obj;
+        let transformedLegereValues: LegereValue[] = [];
+        for (let legerevalue of legerevalues) {
+          transformedLegereValues.push(new LegereValue(
+            legerevalue.groupId,
+            legerevalue.provinciaId,
+            legerevalue.value,
+            legerevalue.date,
+            legerevalue._id
+            )
+          );
+        }
+        this.legerevalues = transformedLegereValues;
+        return transformedLegereValues;
+      })
+      .catch((error: Response) => Observable.throw(error.json()));
+  }
+
+  // Получить значения показателей по ID показателя для всех филиалов
+  getValuesById
+  ( legereValue: LegereValue ) {
+
+    const headers = new Headers({'Content-Type': 'application/json'});
+
+    return this.http.get('http://' + config.serverHost + '/legere/fromindicator/' + legereValue.indicatorId, {headers: headers})
       .map((response: Response) => {
         const legerevalues = response.json().obj;
         let transformedLegereValues: LegereValue[] = [];
@@ -127,7 +154,39 @@ export class LegereService {
       .catch((error: Response) => Observable.throw(error.json()));
   }
 
+  // Добавить филиал
+  postProvincia
+  ( legereProvincia: LegereProvincia ) {
 
+    const body = JSON.stringify( legereProvincia );
+    const headers = new Headers({'Content-Type': 'application/json'});
 
+    return this.http.post('http://' + config.serverHost + '/legere/provincia', body, {headers: headers})
+      .map((response: Response) => response.json())
+      .catch((error: Response) => Observable.throw(error.json()));
+  }
+
+  // Получить филиал
+  getProvincias
+  ( ) {
+
+    const headers = new Headers({'Content-Type': 'application/json'});
+
+    return this.http.get('http://' + config.serverHost + '/legere/provincia', {headers: headers})
+      .map((response: Response) => {
+        const legereprovincias = response.json().obj;
+        let transformedLegereProvincias: LegereIndicatorGroup[] = [];
+        for (let legereprovincia of legereprovincias) {
+          transformedLegereProvincias.push(new LegereIndicatorGroup(
+            legereprovincia.name,
+            legereprovincia._id
+            )
+          );
+        }
+        this.legereprovincias = transformedLegereProvincias;
+        return transformedLegereProvincias;
+      })
+      .catch((error: Response) => Observable.throw(error.json()));
+  }
 
 }

@@ -4,6 +4,7 @@ var router = express.Router();
 var LegereValue           = require('../models/legere.value');
 var LegereIndicator       = require('../models/legere.indicator');
 var LegereIndicatorGroup  = require('../models/legere.indicator-group');
+var LegereProvincia       = require('../models/legere.provincia');
 
 // Добавление значения показателя
 router.post('/value', function (req, res) {
@@ -27,10 +28,33 @@ router.post('/value', function (req, res) {
   });
 });
 
-// Получение значений показателей по ID показателя
-router.get('/fromindicator/:id', function (req, res) {
+// Получение значений показателей по ID показателя и ID филиала
+router.get('/fromprovincia/:provincia&:indicator', function (req, res) {
 
-  LegereValue.find( { indicatorId: req.params.id }, function (err, legerevalue) {
+  LegereValue.find( { indicatorId: req.params.indicator, provinciaId: req.params.provincia } ).limit( 1 ).sort( '-_id' ).exec( function (err, legerevalue) {
+    if (err) {
+      return res.status(500).json({
+        title: 'При получении списка <- Значений показателей -> возникла ошибка',
+        error: err
+      });
+    }
+    if (!legerevalue) {
+      return res.status(404).json({
+        title: 'Данные <- Значения показателей -> не найдены',
+        error: err
+      });
+    }
+    res.status(200).json({
+      message: '<- Значения показателей -> получены',
+      obj: legerevalue
+    });
+  });
+});
+
+// Получение значений показателей по ID показателя (все филиалы)
+router.get('/fromindicator/:indicator', function (req, res) {
+
+  LegereValue.find( { indicatorId: req.params.indicator }, function (err, legerevalue) {
     if (err) {
       return res.status(500).json({
         title: 'При получении списка <- Значений показателей -> возникла ошибка',
@@ -132,6 +156,48 @@ router.get('/indicator-group', function (req, res) {
     res.status(200).json({
       message: '<- Группы показателей -> получены',
       obj: legereindicatorgroup
+    });
+  });
+});
+
+// Добавление филиала
+router.post('/provincia', function (req, res) {
+
+  var legereprovincia = new LegereProvincia({
+    name: req.body.name
+  });
+  legereprovincia.save(function(err, result) {
+    if (err) {
+      return res.status(500).json({
+        title: 'При публикации группы показателей возникла ошибка соединения. Проверьте свое интернет-соединение и при необходимости обратитесь к Администратору.',
+        error: err
+      });
+    }
+    res.status(201).json({
+      message: 'Филиал успешно опубликован',
+      obj: result
+    });
+  });
+});
+
+// Получение филиалов
+router.get('/provincia', function (req, res) {
+  LegereProvincia.find( function (err, legereprovincia) {
+    if (err) {
+      return res.status(500).json({
+        title: 'При получении списка <- Филиалов -> возникла ошибка',
+        error: err
+      });
+    }
+    if (!legereprovincia) {
+      return res.status(404).json({
+        title: 'Данные <- Филиалов -> не найдены',
+        error: err
+      });
+    }
+    res.status(200).json({
+      message: '<- Филиалы -> получены',
+      obj: legereprovincia
     });
   });
 });

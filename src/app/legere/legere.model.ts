@@ -21,3 +21,9 @@ export class LegereIndicatorGroup {
   ){}
 }
 
+export class LegereProvincia {
+  constructor( public name:         any,
+               public id?:          any
+  ){}
+}
+
