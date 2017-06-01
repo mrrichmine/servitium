@@ -5,7 +5,7 @@ var schema = new Schema({
   indicatorId:  {type: Schema.Types.ObjectId, ref: 'LegereIndicator'}, // ID показателя
   provinciaId:  {type: String}, // ID филиала
   value:        {type: Schema.Types.Mixed, required: true}, // Значение показателя
-  date:         {type: Date, default: '01/01/1900'} // Время отправки
+  date:         {type: Date, default: Date.now} // Время отправки
 });
 
 module.exports = mongoose.model('LegereValue', schema);
