@@ -150,7 +150,7 @@
 
   <div [hidden]="!isSubmitedIndicatorGroup">
 
-    <div>
+    <div class="row">
 
       <span class="glyphicon glyphicon-duplicate"></span>
       Показатели
@@ -179,7 +179,7 @@
         </span>
         <span class="input-group-btn">
           <button
-            class="btn btn-primary btn-block"
+            class="btn btn-primary"
             (click)="onPrintIndicatorValues()">
                 <span class="glyphicon glyphicon-print"></span>
           </button>
@@ -265,16 +265,21 @@
 
     <table>
         <tr>
-          <td class="col-xs-3">Филиал</td>
+          <td class="col-xs-6">Филиал</td>
           <td class="col-xs-1"></td>
-          <td class="col-xs-3">Значение показателя</td>
+          <td class="col-xs-2">Значение показателя</td>
+          <td class="col-xs-1"></td>
+          <td class="col-xs-1">Дата</td>
         </tr>
         <tr *ngFor="let legereprintvalue of legereprintvalues"  >
-          <td class="col-xs-3">
-            {{ legereprintvalue.provinciaId }}
+          <td class="col-xs-6">
+            {{ legereprintvalue.provinciaName }}
           <td>
-          <td class="col-xs-3">
+          <td class="col-xs-2">
             {{ legereprintvalue.value }}
+          </td>
+          <td class="col-xs-1">
+            {{ legereprintvalue.date }}
           </td>
         </tr>
     </table>

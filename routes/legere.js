@@ -54,7 +54,7 @@ router.get('/fromprovincia/:provincia&:indicator', function (req, res) {
 // Получение значений показателей по ID показателя (все филиалы)
 router.get('/fromindicator/:indicator', function (req, res) {
 
-  LegereValue.find( { indicatorId: req.params.indicator }, function (err, legerevalue) {
+  LegereValue.find( { indicatorId: req.params.indicator } ).sort( 'provinciaId' ).exec(function (err, legerevalue) {
     if (err) {
       return res.status(500).json({
         title: 'При получении списка <- Значений показателей -> возникла ошибка',

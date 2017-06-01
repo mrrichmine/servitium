@@ -1,7 +1,7 @@
 import { Component, OnInit }        from '@angular/core';
 import { FormGroup, FormControl }   from '@angular/forms';
 
-import { LegereValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia } from "./legere.model";
+import { LegereValue, LegerePrintValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia } from "./legere.model";
 
 import { LegereService }            from "./legere.service";
 
@@ -20,7 +20,7 @@ export class LegereComponent implements OnInit {
   legereindicatorgroups: LegereIndicatorGroup[];
   legereindicators: LegereIndicator[];
   legerevalues: LegereValue[];
-  legereprintvalues: LegereValue[];
+  legereprintvalues: LegerePrintValue[];
 
   selectedProvincia: LegereProvincia;
   selectedIndicatorGroup: LegereIndicatorGroup;
@@ -69,6 +69,7 @@ export class LegereComponent implements OnInit {
     this.selectedProvincia = provincia;
     this.isSubmitedProvincia = false;
     this.isSubmitedIndicatorGroup = false;
+    this.isPrint = false;
 
   }
 
@@ -76,13 +77,20 @@ export class LegereComponent implements OnInit {
 
     this.selectedIndicatorGroup = indicatorGroup;
     this.isSubmitedIndicatorGroup = false;
+    this.isPrint = false;
 
   }
 
   onSelectIndicator( indicator: LegereIndicator ): void {
 
     this.selectedIndicator = indicator;
-    this.getValuesByProvincia()
+    this.getValuesByProvincia();
+
+    if (this.isPrint) {
+
+      this.getValuesById();
+
+    }
 
   }
 
@@ -154,12 +162,29 @@ export class LegereComponent implements OnInit {
 
   }
 
-  onPrintIndicatorValues(){
+  onPrintIndicatorValues( ){
 
     this.isPrint = !this.isPrint;
-    console.log(this.isPrint);
-    this.getValuesById( this.legereprovincias );
+
+    this.getValuesById();
+
     return this.isPrint
+
+  }
+
+  matchingProvinciaNameById( legereprintvalues, legereprovincias ){
+
+    for (let i = 0; i < legereprintvalues.length; i++){
+      for (let j = 0; j < legereprovincias.length; j++){
+        if (legereprintvalues[i].provinciaId == legereprovincias[j].id) {
+          legereprintvalues[i].provinciaName = legereprovincias[j].name
+        }
+      }
+    }
+
+    this.legereprintvalues = legereprintvalues;
+
+    return this.legereprintvalues
 
   }
 
@@ -206,11 +231,14 @@ export class LegereComponent implements OnInit {
         },
         error => {}
       );
+
+    if (this.isPrint) {
+      this.getValuesById();
+    }
+
   }
 
   getValuesByProvincia(){
-
-    console.log('getValuesByProvincia');
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
@@ -228,9 +256,7 @@ export class LegereComponent implements OnInit {
       );
   }
 
-  getValuesById( legereprovincias ){
-
-    console.log('getValuesById');
+  getValuesById(){
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
@@ -241,9 +267,12 @@ export class LegereComponent implements OnInit {
 
     this.legereService.getValuesById( legereValue )
       .subscribe(
-        ( legereprintvalues: LegereValue[]) => {
+        ( legerevalues: LegereValue[]) => {
 
-          this.legereprintvalues = legereprintvalues;
+          this.legereprintvalues = legerevalues;
+
+          this.matchingProvinciaNameById(this.legereprintvalues, this.legereprovincias);
+
           return this.legereprintvalues
         }
       );

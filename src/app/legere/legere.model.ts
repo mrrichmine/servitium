@@ -7,6 +7,17 @@ export class LegereValue {
   ){}
 }
 
+export class LegerePrintValue {
+  constructor( public indicatorId:    any,
+               public provinciaId:    any,
+               public value:          any,
+               public date?:          any,
+               public id?:            any,
+               public provinciaName?: any,
+
+  ){}
+}
+
 export class LegereIndicator {
   constructor( public groupId:      any,
                public name:         any,
