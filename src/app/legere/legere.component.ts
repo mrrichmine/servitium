@@ -1,9 +1,11 @@
-import { Component, OnInit }        from '@angular/core';
-import { FormGroup, FormControl }   from '@angular/forms';
+import {Component, OnInit}        from '@angular/core';
+import {FormGroup, FormControl}   from '@angular/forms';
 
-import { LegereValue, LegerePrintValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia } from "./legere.model";
+import * as moment from 'moment';
 
-import { LegereService }            from "./legere.service";
+import {LegereValue, LegerePrintValue, LegereIndicator, LegereIndicatorGroup, LegereProvincia} from "./legere.model";
+
+import {LegereService}            from "./legere.service";
 
 @Component({
   selector: 'app-legere',
@@ -26,16 +28,17 @@ export class LegereComponent implements OnInit {
   selectedIndicatorGroup: LegereIndicatorGroup;
   selectedIndicator: LegereIndicator;
 
-  isSubmitedProvincia       = false;
-  isSubmitedIndicatorGroup  = false;
-  isPrint                   = false;
+  isSubmitedProvincia = false;
+  isSubmitedIndicatorGroup = false;
+  isPrint = false;
 
-  isEditProvincia           = false;
-  isEditIndicatorGroup      = false;
-  isEditIndicator           = false;
-  isEditValue               = false;
+  isEditProvincia = false;
+  isEditIndicatorGroup = false;
+  isEditIndicator = false;
+  isEditValue = false;
 
-  constructor( private legereService: LegereService ) { }
+  constructor(private legereService: LegereService) {
+  }
 
   addProvinciaForm: FormGroup;
   addIndicatorGroupForm: FormGroup;
@@ -45,26 +48,26 @@ export class LegereComponent implements OnInit {
   ngOnInit() {
 
     this.addProvinciaForm = new FormGroup({
-      name:   new FormControl( null, [ ] )
+      name: new FormControl(null, [])
     });
 
     this.addIndicatorGroupForm = new FormGroup({
-      name:   new FormControl( null, [ ] )
+      name: new FormControl(null, [])
     });
 
     this.addIndicatorForm = new FormGroup({
-      name:   new FormControl( null, [ ] )
+      name: new FormControl(null, [])
     });
 
     this.addValueForm = new FormGroup({
-      value:   new FormControl( null, [ ] )
+      value: new FormControl(null, [])
     });
 
     this.getProvincias()
 
   }
 
-  onSelectProvincia( provincia: LegereProvincia ): void {
+  onSelectProvincia(provincia: LegereProvincia): void {
 
     this.selectedProvincia = provincia;
     this.isSubmitedProvincia = false;
@@ -73,7 +76,7 @@ export class LegereComponent implements OnInit {
 
   }
 
-  onSelectIndicatorGroup( indicatorGroup: LegereIndicatorGroup ): void {
+  onSelectIndicatorGroup(indicatorGroup: LegereIndicatorGroup): void {
 
     this.selectedIndicatorGroup = indicatorGroup;
     this.isSubmitedIndicatorGroup = false;
@@ -81,7 +84,7 @@ export class LegereComponent implements OnInit {
 
   }
 
-  onSelectIndicator( indicator: LegereIndicator ): void {
+  onSelectIndicator(indicator: LegereIndicator): void {
 
     this.selectedIndicator = indicator;
     this.getValuesByProvincia();
@@ -94,75 +97,76 @@ export class LegereComponent implements OnInit {
 
   }
 
-  onSubmitingProvincia(){
+  onSubmitingProvincia() {
 
     this.isSubmitedProvincia = true;
     this.getIndicatorGroups();
 
   }
 
-  onSubmitingIndicatorGroup(){
+  onSubmitingIndicatorGroup() {
 
     this.isSubmitedIndicatorGroup = true;
     this.getIndicators()
 
   }
 
-  postProvincia(){
+  postProvincia() {
 
     const legereProvincia = new LegereProvincia(
       this.addProvinciaForm.get('name').value
     );
 
-    this.legereService.postProvincia( legereProvincia )
+    this.legereService.postProvincia(legereProvincia)
       .subscribe(
         data => {
           this.addProvinciaForm.reset();
           this.getProvincias()
         },
-        error => {}
+        error => {
+        }
       );
   }
 
-  getProvincias(){
+  getProvincias() {
     this.legereService.getProvincias()
       .subscribe(
-        ( legereprovincias: LegereProvincia[]) => {
+        (legereprovincias: LegereProvincia[]) => {
           this.legereprovincias = legereprovincias;
           return this.legereprovincias
         }
       );
   }
 
-  onEditProvincia(){
+  onEditProvincia() {
 
     this.isEditProvincia = !this.isEditProvincia;
     return this.isEditProvincia
 
   }
 
-  onEditIndicatorGroup(){
+  onEditIndicatorGroup() {
 
     this.isEditIndicatorGroup = !this.isEditIndicatorGroup;
     return this.isEditIndicatorGroup
 
   }
 
-  onEditIndicator(){
+  onEditIndicator() {
 
     this.isEditIndicator = !this.isEditIndicator;
     return this.isEditIndicator
 
   }
 
-  onEditValue(){
+  onEditValue() {
 
     this.isEditValue = !this.isEditValue;
     return this.isEditValue
 
   }
 
-  onPrintIndicatorValues( ){
+  onPrintIndicatorValues() {
 
     this.isPrint = !this.isPrint;
 
@@ -172,10 +176,12 @@ export class LegereComponent implements OnInit {
 
   }
 
-  matchingProvinciaNameById( legereprintvalues, legereprovincias ){
+  matchingProvinciaNameById(legereprintvalues, legereprovincias) {
 
-    for (let i = 0; i < legereprintvalues.length; i++){
-      for (let j = 0; j < legereprovincias.length; j++){
+    for (let i = 0; i < legereprintvalues.length; i++) {
+      moment.locale('ru');
+      legereprintvalues[i].date = moment(legereprintvalues[i].date).format('llll');
+      for (let j = 0; j < legereprovincias.length; j++) {
         if (legereprintvalues[i].provinciaId == legereprovincias[j].id) {
           legereprintvalues[i].provinciaName = legereprovincias[j].name
         }
@@ -188,33 +194,34 @@ export class LegereComponent implements OnInit {
 
   }
 
-  postIndicatorGroup(){
+  postIndicatorGroup() {
 
     const legereIndicatorGroup = new LegereIndicatorGroup(
       this.addIndicatorGroupForm.get('name').value
     );
 
-    this.legereService.postIndicatorGroup( legereIndicatorGroup )
+    this.legereService.postIndicatorGroup(legereIndicatorGroup)
       .subscribe(
         data => {
           this.addIndicatorGroupForm.reset();
           this.getIndicatorGroups()
         },
-        error => {}
+        error => {
+        }
       );
   }
 
-  getIndicatorGroups(){
+  getIndicatorGroups() {
     this.legereService.getIndicatorGroup()
       .subscribe(
-        ( legereindicatorgroups: LegereIndicatorGroup[]) => {
+        (legereindicatorgroups: LegereIndicatorGroup[]) => {
           this.legereindicatorgroups = legereindicatorgroups;
           return this.legereindicatorgroups
         }
       );
   }
 
-  postValue(){
+  postValue() {
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
@@ -223,13 +230,14 @@ export class LegereComponent implements OnInit {
       this.date
     );
 
-    this.legereService.postValue( legereValue )
+    this.legereService.postValue(legereValue)
       .subscribe(
         data => {
           this.addValueForm.reset();
           this.getValuesByProvincia()
         },
-        error => {}
+        error => {
+        }
       );
 
     if (this.isPrint) {
@@ -238,7 +246,7 @@ export class LegereComponent implements OnInit {
 
   }
 
-  getValuesByProvincia(){
+  getValuesByProvincia() {
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
@@ -247,16 +255,16 @@ export class LegereComponent implements OnInit {
       ''
     );
 
-    this.legereService.getValuesByProvincia( legereValue )
+    this.legereService.getValuesByProvincia(legereValue)
       .subscribe(
-        ( legerevalues: LegereValue[]) => {
+        (legerevalues: LegereValue[]) => {
           this.legerevalues = legerevalues;
           return this.legerevalues
         }
       );
   }
 
-  getValuesById(){
+  getValuesById() {
 
     const legereValue = new LegereValue(
       this.selectedIndicator.id,
@@ -265,9 +273,9 @@ export class LegereComponent implements OnInit {
       ''
     );
 
-    this.legereService.getValuesById( legereValue )
+    this.legereService.getValuesById(legereValue)
       .subscribe(
-        ( legerevalues: LegereValue[]) => {
+        (legerevalues: LegereValue[]) => {
 
           this.legereprintvalues = legerevalues;
 
@@ -278,7 +286,7 @@ export class LegereComponent implements OnInit {
       );
   }
 
-  postIndicator(){
+  postIndicator() {
 
     const legereIndicator = new LegereIndicator(
       this.selectedIndicatorGroup.id,
@@ -286,27 +294,28 @@ export class LegereComponent implements OnInit {
       this.date
     );
 
-    this.legereService.postIndicator( legereIndicator )
+    this.legereService.postIndicator(legereIndicator)
       .subscribe(
         data => {
           this.addIndicatorForm.reset();
           this.getIndicators()
         },
-        error => {}
+        error => {
+        }
       );
 
   }
 
-  getIndicators(){
+  getIndicators() {
 
     const legereIndicatorGroup = new LegereIndicatorGroup(
       this.selectedIndicatorGroup.name,
       this.selectedIndicatorGroup.id
     );
 
-    this.legereService.getIndicatorsById( legereIndicatorGroup )
+    this.legereService.getIndicatorsById(legereIndicatorGroup)
       .subscribe(
-        ( legereindicators: LegereIndicator[]) => {
+        (legereindicators: LegereIndicator[]) => {
           this.legereindicators = legereindicators;
           return this.legereindicators
         }
