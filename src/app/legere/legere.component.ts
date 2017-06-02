@@ -30,6 +30,9 @@ export class LegereComponent implements OnInit {
 
   isSubmitedProvincia = false;
   isSubmitedIndicatorGroup = false;
+
+  isEditMode = false;
+  isFillingMode = false;
   isPrint = false;
 
   isEditProvincia = false;
@@ -138,6 +141,20 @@ export class LegereComponent implements OnInit {
       );
   }
 
+  onEditMode() {
+
+    this.isEditMode = !this.isEditMode;
+    return this.isEditMode
+
+  }
+
+  onFillingMode() {
+
+    this.isFillingMode = !this.isFillingMode;
+    return this.isFillingMode
+
+  }
+
   onEditProvincia() {
 
     this.isEditProvincia = !this.isEditProvincia;
@@ -176,17 +193,27 @@ export class LegereComponent implements OnInit {
 
   }
 
-  matchingProvinciaNameById(legereprintvalues, legereprovincias) {
+  representValuesForPrint(legereprintvalues, legereprovincias) {
 
     for (let i = 0; i < legereprintvalues.length; i++) {
+
+      // Moment.JS: Локализация и перевод даты ISO-формата в удобный вид
       moment.locale('ru');
       legereprintvalues[i].date = moment(legereprintvalues[i].date).format('llll');
+
+      // Подстановка наименования филиала в массив значений
       for (let j = 0; j < legereprovincias.length; j++) {
         if (legereprintvalues[i].provinciaId == legereprovincias[j].id) {
           legereprintvalues[i].provinciaName = legereprovincias[j].name
         }
       }
+
     }
+
+    // Сортировка массива по наименованию филиала
+    Array.prototype.sort.call( legereprintvalues, function ( a, b ) {
+      return a[5] > b[5] ? 1 : a[5] < b[5] ? -1 : 0;
+    });
 
     this.legereprintvalues = legereprintvalues;
 
@@ -279,7 +306,7 @@ export class LegereComponent implements OnInit {
 
           this.legereprintvalues = legerevalues;
 
-          this.matchingProvinciaNameById(this.legereprintvalues, this.legereprovincias);
+          this.representValuesForPrint(this.legereprintvalues, this.legereprovincias);
 
           return this.legereprintvalues
         }
