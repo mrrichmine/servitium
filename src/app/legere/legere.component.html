@@ -8,6 +8,30 @@
 
 </div>
 
+<div class="col-xs-12">
+
+  <div class="btn-group" role="group">
+
+    <button
+      class="btn btn-warning"
+      (click)="onEditMode()">
+      <span class="glyphicon glyphicon-wrench"></span> Редактор
+    </button>
+    <button
+      class="btn btn-primary"
+      (click)="onFillingMode()">
+      <span class="glyphicon glyphicon-th-list"></span> Наполнение
+    </button>
+    <button
+      class="btn btn-info"
+      (click)="onPrintIndicatorValues()">
+      <span class="glyphicon glyphicon-print"></span> Отчеты
+    </button>
+
+  </div>
+
+</div>
+
 
 <div class="col-xs-12">
 
@@ -25,14 +49,6 @@
         [ngValue]="legereprovincia.id"
         (click)="onSelectProvincia(legereprovincia)">{{ legereprovincia.name }}</option>
     </select>
-
-    <span class="input-group-btn">
-        <button
-          class="btn btn-warning"
-          (click)="onEditProvincia()">
-          <span class="glyphicon glyphicon-wrench"></span>
-        </button>
-      </span>
     <span class="input-group-btn">
       <button
         type="submit"
@@ -41,7 +57,15 @@
             <span class="glyphicon glyphicon-ok"></span>
       </button>
     </span>
-
+    <div [hidden]="!isEditMode">
+      <span class="input-group-btn" >
+          <button
+            class="btn btn-warning"
+            (click)="onEditProvincia()">
+            <span class="glyphicon glyphicon-wrench"></span>
+          </button>
+      </span>
+    </div>
   </div>
 
   <div [hidden]="!isEditProvincia">
@@ -94,14 +118,6 @@
           [ngValue]="legereindicatorgroup.id"
           (click)="onSelectIndicatorGroup(legereindicatorgroup)">{{ legereindicatorgroup.name }}</option>
       </select>
-
-      <span class="input-group-btn">
-        <button
-          class="btn btn-warning"
-          (click)="onEditIndicatorGroup()">
-          <span class="glyphicon glyphicon-wrench"></span>
-        </button>
-      </span>
       <span class="input-group-btn">
         <button
           type="submit"
@@ -110,6 +126,16 @@
           <span class="glyphicon glyphicon-ok"></span>
         </button>
       </span>
+      <div [hidden]="!isEditMode">
+        <span class="input-group-btn">
+          <button
+            [hidden]="!isEditMode"
+            class="btn btn-warning"
+            (click)="onEditIndicatorGroup()">
+            <span class="glyphicon glyphicon-wrench"></span>
+          </button>
+        </span>
+      </div>
 
     </div>
 
@@ -150,41 +176,27 @@
 
   <div [hidden]="!isSubmitedIndicatorGroup">
 
-    <div class="row">
+    <span class="glyphicon glyphicon-duplicate"></span>
+    Показатели
+    <br>
 
-      <span class="glyphicon glyphicon-duplicate"></span>
-      Показатели
-      <br>
-
-    </div>
-
-    <div class="col-xs-6">
+    <div>
 
       <table class="table table-hover">
-        <tr *ngFor="let legereindicator of legereindicators"
+        <tr class=""
+            *ngFor="let legereindicator of legereindicators"
             (click)="onSelectIndicator(legereindicator)">
           <span class="glyphicon glyphicon-file"></span>
           {{ legereindicator.name }}
         </tr>
       </table>
 
-      <div class="input-group">
-
-        <span class="input-group-btn">
-          <button
-            class="btn btn-warning"
-            (click)="onEditIndicator()">
-            <span class="glyphicon glyphicon-wrench"></span>
-          </button>
-        </span>
-        <span class="input-group-btn">
-          <button
-            class="btn btn-primary"
-            (click)="onPrintIndicatorValues()">
-                <span class="glyphicon glyphicon-print"></span>
-          </button>
-        </span>
-
+      <div [hidden]="!isEditMode">
+        <button
+          class="btn btn-warning"
+          (click)="onEditIndicator()">
+          <span class="glyphicon glyphicon-wrench"></span>
+        </button>
       </div>
 
       <div [hidden]="!isEditIndicator">
@@ -215,39 +227,38 @@
 
       </div>
 
-    </div>
+      <div class="col-xs-6" [hidden]="!isFillingMode">
 
-    <div class="col-xs-6">
+        <span>
+          {{ selectedIndicator?.name }}
+          <span class="badge" *ngFor="let legerevalue of legerevalues" (click)="onEditValue()">{{ legerevalue.value }}</span>
+        </span>
 
-      <span>
-        {{ selectedIndicator?.name }}
-        <span class="badge" *ngFor="let legerevalue of legerevalues" (click)="onEditValue()">{{ legerevalue.value }}</span>
-      </span>
+        <form (ngSubmit)="postValue()" [formGroup]="addValueForm">
 
-      <form (ngSubmit)="postValue()" [formGroup]="addValueForm">
+          <div class="input-group" [hidden]="!isEditValue">
 
-        <div class="input-group" [hidden]="!isEditValue">
+            <input
+              type="text"
+              id="legereValue"
+              class="btn-block form-control"
+              placeholder="Введите значение показателя"
+              formControlName="value"
+              autocomplete="off">
 
-          <input
-            type="text"
-            id="legereValue"
-            class="btn-block form-control"
-            placeholder="Введите значение показателя"
-            formControlName="value"
-            autocomplete="off">
+            <span class="input-group-btn">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-block">
+                      <span class="glyphicon glyphicon-ok"></span>
+               </button>
+            </span>
 
-          <span class="input-group-btn">
-              <button
-                type="submit"
-                class="btn btn-primary btn-block">
-                    <span class="glyphicon glyphicon-ok"></span>
-             </button>
-          </span>
+          </div>
 
-        </div>
+        </form>
 
-      </form>
-
+      </div>
     </div>
 
   </div>
@@ -259,18 +270,19 @@
   <div [hidden]="!isPrint">
 
     <span>
-      Отчет по показателю: <br>
-      {{ selectedIndicator?.name }} <br>
+      <hr>
+
+      <h3>{{ selectedIndicator?.name }}</h3>
     </span>
 
-    <table>
+    <table class="table table-bordered">
         <tr>
           <td class="col-xs-6">Филиал</td>
           <td class="col-xs-1"></td>
-          <td class="col-xs-2">Значение показателя</td>
+          <td class="col-xs-2">Значение</td>
           <td class="col-xs-3">Дата</td>
         </tr>
-        <tr *ngFor="let legereprintvalue of legereprintvalues"  >
+        <tr *ngFor="let legereprintvalue of legereprintvalues" >
           <td class="col-xs-6">
             {{ legereprintvalue.provinciaName }}
           <td>
