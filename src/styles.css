@@ -1,0 +1,20 @@
+@font-face {
+  font-family: Glametrix;
+  src:  local("Glametrix"),
+        url(./assets/fonts/Glametrix/Glametrix.otf)
+}
+
+body {
+  font-family: Glametrix;
+  font-size: 18px;
+}
+
+.glyphicon {
+  font-size: 10px;
+}
+
+.loading {
+  font-size: 36px;
+  text-align: center;
+  padding-top: 10%;
+}

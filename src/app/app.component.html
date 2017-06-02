@@ -1,11 +1,17 @@
 <div class="container">
-  <div class="row">
-    <div class="col-xs-12">
-      <h1>
-        Servitium.Auth
-      </h1>
+  <div class="col-xs-9">
+    <div class="row">
+      <router-outlet></router-outlet>
     </div>
   </div>
+  <div class="col-xs-3 servitium-menu">
+    <h3>
+      <a href="/">
+        ГЛАВНОЕ МЕНЮ
+      </a>
+    </h3>
+    <a routerLink="/colloquim" routerLinkActive="active"><span class="glyphicon glyphicon-comment"></span> Корпоративный мессенджер</a>
+    <br>
+    <a routerLink="/legere" routerLinkActive="active"><span class="glyphicon glyphicon-list-alt"></span> Система сбора информации</a>
+  </div>
 </div>
-
-

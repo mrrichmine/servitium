@@ -1,0 +1,294 @@
+<div class="row">
+
+  <div class="col-xs-12">
+    <h3>
+      Servitium.Legere | Система сбора информации
+    </h3>
+  </div>
+
+</div>
+
+
+<div class="col-xs-12">
+
+  <span class="glyphicon glyphicon-th-list"></span>
+  Выберите подразделение
+  <br>
+
+  <div class="input-group">
+    <select
+      name="branch"
+      id="legereProvinciaSelected"
+      class="btn-block form-control servitium-form">
+      <option
+        *ngFor="let legereprovincia of legereprovincias"
+        [ngValue]="legereprovincia.id"
+        (click)="onSelectProvincia(legereprovincia)">{{ legereprovincia.name }}</option>
+    </select>
+
+    <span class="input-group-btn">
+        <button
+          class="btn btn-warning"
+          (click)="onEditProvincia()">
+          <span class="glyphicon glyphicon-wrench"></span>
+        </button>
+      </span>
+    <span class="input-group-btn">
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        (click)="onSubmitingProvincia()">
+            <span class="glyphicon glyphicon-ok"></span>
+      </button>
+    </span>
+
+  </div>
+
+  <div [hidden]="!isEditProvincia">
+
+    <form (ngSubmit)="postProvincia()" [formGroup]="addProvinciaForm">
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="legereProvinciaName"
+          class="btn-block form-control"
+          placeholder="Введите название нового филиала"
+          formControlName="name"
+          autocomplete="off">
+
+        <span class="input-group-btn">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            (click)="onSubmitingProvincia()">
+            <span class="glyphicon glyphicon-ok"></span>
+          </button>
+        </span>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="col-xs-12">
+
+  <div [hidden]="!isSubmitedProvincia">
+
+    <span class="glyphicon glyphicon-book"></span>
+    Выберите группу показателей
+    <br>
+
+    <div class="input-group">
+
+      <select
+        name="legereindicatorgroup"
+        id="legereIndicatorGroupSelected"
+        class="btn-block form-control">
+        <option
+          *ngFor="let legereindicatorgroup of legereindicatorgroups"
+          [ngValue]="legereindicatorgroup.id"
+          (click)="onSelectIndicatorGroup(legereindicatorgroup)">{{ legereindicatorgroup.name }}</option>
+      </select>
+
+      <span class="input-group-btn">
+        <button
+          class="btn btn-warning"
+          (click)="onEditIndicatorGroup()">
+          <span class="glyphicon glyphicon-wrench"></span>
+        </button>
+      </span>
+      <span class="input-group-btn">
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          (click)="onSubmitingIndicatorGroup()">
+          <span class="glyphicon glyphicon-ok"></span>
+        </button>
+      </span>
+
+    </div>
+
+  </div>
+
+  <div [hidden]="!isEditIndicatorGroup">
+
+    <form (ngSubmit)="postIndicatorGroup()" [formGroup]="addIndicatorGroupForm">
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="legereIndicatorGroupName"
+          class="btn-block form-control"
+          placeholder="Введите название новой группы показателей"
+          formControlName="name"
+          autocomplete="off">
+
+        <span class="input-group-btn">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            (click)="onSubmitingIndicatorGroup()">
+            <span class="glyphicon glyphicon-ok"></span>
+          </button>
+        </span>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="col-xs-12">
+
+  <div [hidden]="!isSubmitedIndicatorGroup">
+
+    <div class="row">
+
+      <span class="glyphicon glyphicon-duplicate"></span>
+      Показатели
+      <br>
+
+    </div>
+
+    <div class="col-xs-6">
+
+      <table class="table table-hover">
+        <tr *ngFor="let legereindicator of legereindicators"
+            (click)="onSelectIndicator(legereindicator)">
+          <span class="glyphicon glyphicon-file"></span>
+          {{ legereindicator.name }}
+        </tr>
+      </table>
+
+      <div class="input-group">
+
+        <span class="input-group-btn">
+          <button
+            class="btn btn-warning"
+            (click)="onEditIndicator()">
+            <span class="glyphicon glyphicon-wrench"></span>
+          </button>
+        </span>
+        <span class="input-group-btn">
+          <button
+            class="btn btn-primary"
+            (click)="onPrintIndicatorValues()">
+                <span class="glyphicon glyphicon-print"></span>
+          </button>
+        </span>
+
+      </div>
+
+      <div [hidden]="!isEditIndicator">
+
+        <form (ngSubmit)="postIndicator()" [formGroup]="addIndicatorForm">
+
+          <div class="input-group">
+
+            <input
+              type="text"
+              id="legereIndicatorName"
+              class="btn-block form-control"
+              placeholder="Введите название нового показателя"
+              formControlName="name"
+              autocomplete="off">
+
+            <span class="input-group-btn">
+              <button
+                type="submit"
+                class="btn btn-primary btn-block">
+                    <span class="glyphicon glyphicon-ok"></span>
+              </button>
+            </span>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+    <div class="col-xs-6">
+
+      <span>
+        {{ selectedIndicator?.name }}
+        <span class="badge" *ngFor="let legerevalue of legerevalues" (click)="onEditValue()">{{ legerevalue.value }}</span>
+      </span>
+
+      <form (ngSubmit)="postValue()" [formGroup]="addValueForm">
+
+        <div class="input-group" [hidden]="!isEditValue">
+
+          <input
+            type="text"
+            id="legereValue"
+            class="btn-block form-control"
+            placeholder="Введите значение показателя"
+            formControlName="value"
+            autocomplete="off">
+
+          <span class="input-group-btn">
+              <button
+                type="submit"
+                class="btn btn-primary btn-block">
+                    <span class="glyphicon glyphicon-ok"></span>
+             </button>
+          </span>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="col-xs-12">
+
+  <div [hidden]="!isPrint">
+
+    <span>
+      Отчет по показателю: <br>
+      {{ selectedIndicator?.name }} <br>
+    </span>
+
+    <table>
+        <tr>
+          <td class="col-xs-6">Филиал</td>
+          <td class="col-xs-1"></td>
+          <td class="col-xs-2">Значение показателя</td>
+          <td class="col-xs-3">Дата</td>
+        </tr>
+        <tr *ngFor="let legereprintvalue of legereprintvalues"  >
+          <td class="col-xs-6">
+            {{ legereprintvalue.provinciaName }}
+          <td>
+          <td class="col-xs-2">
+            {{ legereprintvalue.value }}
+          </td>
+          <td class="col-xs-3">
+            {{ legereprintvalue.date }}
+          </td>
+        </tr>
+    </table>
+
+
+
+  </div>
+
+</div>
+
+
+
+

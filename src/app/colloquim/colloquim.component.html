@@ -1,0 +1,85 @@
+<h3>
+  Servitium.Colloquim | Корпоративный мессенджер
+</h3>
+
+<form (ngSubmit)="onSubmitingMessage()" [formGroup]="colloquimForm">
+
+  <div class="col-xs-2">
+
+    <div class="row">
+      <span class="glyphicon glyphicon-user"></span>
+      Ваше имя
+      <input
+        type="text"
+        id="creator"
+        class="form-control"
+        placeholder="Введите Ваше имя"
+        formControlName="creator">
+    </div>
+    <div class="row" [hidden]="isSubmitedName">
+      <button
+        class="btn btn-block btn-primary"
+        (click)="onSubmitingName()">
+        Подтвердить имя
+      </button>
+    </div>
+
+    <div class="row" [hidden]="!isSubmitedName">
+      <span class="glyphicon glyphicon-list-alt"></span>
+      Комната
+      <input
+        type="text"
+        id="room"
+        class="form-control"
+        placeholder="Введите идентификатор"
+        value="МФЦ - Обший чат"
+        formControlName="room">
+    </div>
+
+  </div>
+
+  <div class="col-xs-1">
+
+  </div>
+
+  <div class="col-xs-9">
+
+    <div class="row" [hidden]="isSubmitedName">
+      Добро пожаловать, представтесь пожалуйста!
+    </div>
+
+    <div class="row" [hidden]="!isSubmitedName">
+      <span class="glyphicon glyphicon-comment"></span>
+      Ваше сообщение
+    </div>
+
+    <div class="row" [hidden]="!isSubmitedName">
+      <div class="input-group">
+        <input
+          type="text"
+          id="text"
+          class="form-control"
+          placeholder="Введите Ваше сообщение"
+          formControlName="text">
+        <span class="input-group-btn">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block">
+            Отправить
+          </button>
+        </span>
+      </div>
+    </div>
+
+    <div class="row" [hidden]="!isSubmitedName">
+      <span class="glyphicon glyphicon-list"></span>
+      Сообщения комнаты:
+      <app-colloquim__message *ngFor="let message of messages" [message]="message">
+        <span class="glyphicon glyphicon-download"></span>
+        Загружаем список Филиалов
+      </app-colloquim__message>
+    </div>
+
+  </div>
+
+</form>
