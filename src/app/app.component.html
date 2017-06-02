@@ -1,8 +1,17 @@
 <div class="container">
   <div class="col-xs-9">
-    <app-colloquim></app-colloquim>
+    <div class="row">
+      <router-outlet></router-outlet>
+    </div>
   </div>
   <div class="col-xs-3 servitium-menu">
-    <img src="./assets/img/logo_750x300px.png" height="90" width="225">
+    <h3>
+      <a href="/">
+        ГЛАВНОЕ МЕНЮ
+      </a>
+    </h3>
+    <a routerLink="/colloquim" routerLinkActive="active"><span class="glyphicon glyphicon-comment"></span> Корпоративный мессенджер</a>
+    <br>
+    <a routerLink="/legere" routerLinkActive="active"><span class="glyphicon glyphicon-list-alt"></span> Система сбора информации</a>
   </div>
 </div>

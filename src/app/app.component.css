@@ -1,3 +1,7 @@
 .container {
   margin-top: 10px;
 }
+
+.servitium-form {
+  border-radius: 0px;
+}

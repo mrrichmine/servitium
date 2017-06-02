@@ -25,6 +25,7 @@ router.post('/post', function (req, res) {
   });
 });
 
+// Получение списка сообщений по названию комнаты
 router.get('/get/:room', function (req, res) {
   ColloquimMessage.find({ room: req.params.room }).limit( 30 ).sort( '-_id' ).exec( function (err, colloquimmessages) {
     if (err) {
